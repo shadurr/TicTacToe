@@ -1,38 +1,72 @@
 document.addEventListener('DOMContentLoaded', function() {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => cell.addEventListener('click', handleClick));
+    cells.forEach(cell => cell.addEventListener('dragstart', handleDragStart));
+    cells.forEach(cell => cell.addEventListener('dragover', handleDragOver));
+    cells.forEach(cell => cell.addEventListener('drop', handleDrop));
 });
 
-let board = Array.from(Array(9).keys());
+let dragStartIndex;
 let turn = 'X';
-let xPieces = 0;
-let oPieces = 0;
+let xPieces = 0; // New line
+let oPieces = 0; // New line
+const board = Array(9).fill(null);
+
+function handleDragStart(event) {
+    dragStartIndex = parseInt(event.target.id.replace('cell-', ''));
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    const dropIndex = parseInt(event.target.id.replace('cell-', ''));
+    if (board[dropIndex] || dropIndex === dragStartIndex) {
+        return;
+    }
+    board[dropIndex] = board[dragStartIndex];
+    board[dragStartIndex] = null;
+    renderBoard();
+    turn = turn === 'X' ? 'O' : 'X';
+}
 
 function handleClick(event) {
-    console.log(`Clicked cell id: ${event.target.id}`);
     const cell = event.target;
     const index = parseInt(cell.id.replace('cell-', ''));
-
+    
     if (!board[index]) {
-        if ((turn === 'X' && xPieces < 3) || (turn === 'O' && oPieces < 3)) {
+        if ((turn === 'X' && xPieces < 3) || (turn === 'O' && oPieces < 3)) { // New condition
             board[index] = turn;
-            
+
             if (turn === 'X') {
-                xPieces++;
-                cell.style.backgroundImage = "url('https://i.imgur.com/niv24U2.png')";
+                xPieces++; // New line
             } else {
-                oPieces++;
-                cell.style.backgroundImage = "url('https://i.imgur.com/oqjtg8K.png')";
+                oPieces++; // New line
             }
 
             if (checkWin(turn)) {
                 alert(`${turn} wins!`);
                 resetBoard();
             }
-            
             turn = turn === 'X' ? 'O' : 'X';
+            renderBoard();
         }
     }
+}
+
+function renderBoard() {
+    board.forEach((mark, index) => {
+        const cell = document.getElementById(`cell-${index}`);
+        if (mark === 'X') {
+            cell.style.backgroundImage = "url('https://i.imgur.com/niv24U2.png')";
+        } else if (mark === 'O') {
+            cell.style.backgroundImage = "url('https://i.imgur.com/oqjtg8K.png')";
+        } else {
+            cell.style.backgroundImage = '';
+        }
+    });
 }
 
 function checkWin(player) {
@@ -47,7 +81,7 @@ function checkWin(player) {
         [2, 4, 6]
     ];
     
-    return winningCombination.some(combination => 
+    return winningCombination.some(combination =>
         board[combination[0]] === player &&
         board[combination[1]] === player &&
         board[combination[2]] === player
@@ -55,9 +89,9 @@ function checkWin(player) {
 }
 
 function resetBoard() {
-    board = Array.from(Array(9).keys());
-    xPieces = 0;
-    oPieces = 0;
-    document.querySelectorAll('.cell').forEach(cell => cell.style.backgroundImage = '');
+    board.fill(null);
+    xPieces = 0; // New line
+    oPieces = 0; // New line
+    renderBoard();
     turn = 'X';
 }
