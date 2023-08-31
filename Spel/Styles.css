@@ -1,7 +1,8 @@
 #board {
-    /* background-image: url('https://i.imgur.com/XSsWdSe.png'); */
+    background-image: url('C:\Users\Leo-2017\TTT\TicTacToe\Bilder\Board.png'); 
     
-    background-color: blue;
+    /*background-color: blue;*/
+
     width: 393px;
     height: 388px;
     display: grid;
