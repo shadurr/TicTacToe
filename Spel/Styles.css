@@ -1,5 +1,6 @@
 #board {
     background-image: url('https://raw.githubusercontent.com/shadurr/TicTacToe/main/Bilder/Board.png'); 
+    z-index: 1;
         width: 300px;  /* Adjusted to 3*100px */
         height: 300px;  /* Adjusted to 3*100px */
         display: grid;
@@ -20,4 +21,15 @@
         padding: 0;  /* New, ensuring that no default padding is applied */
         box-sizing: border-box;  /* New, to make sure padding and border are included in the total width and height */
     }
-    
+    .cell:active {
+        cursor: grabbing;
+    }
+
+    .draggablePiece {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 9999; /* A high z-index value */
+}

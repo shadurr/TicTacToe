@@ -1,0 +1,8 @@
+/* animations.css */
+.cell-transitioning {
+    transition: background-image 0.1s ease-in-out;
+}
+
+.dragging {
+    opacity: 0.5;
+}
