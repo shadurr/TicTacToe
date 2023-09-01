@@ -1,11 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const cells = document.querySelectorAll('.cell');
-    const draggablePiece = document.createElement('div');
-draggablePiece.className = 'draggablePiece';
-    cells.forEach(cell => cell.addEventListener('mousedown', handleMouseDown));
-    cells.forEach(cell => cell.addEventListener('mouseup', handleMouseUp));
-    cells.forEach(cell => cell.addEventListener('mousemove', handleMouseMove));
-    cells.forEach(cell => cell.addEventListener('click', handleClick));
+  const cells = document.querySelectorAll('.cell');
+
+  // Initialize the draggablePiece
+  let draggablePiece = document.createElement('div');
+  draggablePiece.className = 'draggablePiece';
+  draggablePiece.style.position = 'fixed';
+  draggablePiece.style.opacity = '0.5';
+  draggablePiece.style.width = '100px';
+  draggablePiece.style.height = '100px';
+  draggablePiece.style.display = 'none';
+  draggablePiece.style.zIndex = '9999';
+  document.body.appendChild(draggablePiece);
+
+  cells.forEach(cell => cell.addEventListener('mousedown', handleMouseDown));
+  cells.forEach(cell => cell.addEventListener('mouseup', handleMouseUp));
+  cells.forEach(cell => cell.addEventListener('mousemove', handleMouseMove));
+  cells.forEach(cell => cell.addEventListener('click', handleClick));
+
+  // Rest of your code
 });
 
 let isDragging = false;
@@ -36,21 +48,29 @@ function handleMouseDown(event) {
 }
 
 function handleMouseUp(event) {
-    if (isDragging) {
-        isDragging = false;
-        draggablePiece.style.display = 'none';
+  if (isDragging) {
+      isDragging = false;
+      draggablePiece.style.display = 'none';
 
-        const dropCell = document.elementFromPoint(event.clientX, event.clientY);
-        const dropIndex = parseInt(dropCell.id.replace('cell-', ''));
+      const dropCell = document.elementFromPoint(event.clientX, event.clientY);
+      const dropIndex = parseInt(dropCell.id.replace('cell-', ''));
 
-        if (board[dropIndex] || dropIndex === dragStartIndex) {
-            return;
-        }
-        board[dropIndex] = board[dragStartIndex];
-        board[dragStartIndex] = null;
-        renderBoard();
-        turn = turn === 'X' ? 'O' : 'X';
-    }
+      if (board[dropIndex] || dropIndex === dragStartIndex) {
+          return;
+      }
+      board[dropIndex] = board[dragStartIndex];
+      board[dragStartIndex] = null;
+      renderBoard();
+
+      // Check for a win here after the piece has been moved.
+      if (checkWin(board[dropIndex])) {
+          alert(`${board[dropIndex]} wins!`);
+          setTimeout(() => resetBoard(), 3000);
+          return;
+      }
+
+      turn = turn === 'X' ? 'O' : 'X';
+  }
 }
 
 function handleMouseMove(event) {
@@ -119,4 +139,3 @@ function handleMouseMove(event) {
     renderBoard();
     turn = 'X';
   }
-  document.body.appendChild(draggablePiece);
